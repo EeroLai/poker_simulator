@@ -43,15 +43,15 @@ def evaluate_hand(hand):
     if len(set(suits)) == 1:
         # 判斷是否有順子
         if len(sorted_ranks) == 5 and is_straight(hand):
-            return "同花順", max(sorted_ranks)
+            return "同花順", 9 ,max(sorted_ranks)
         else:
-            return "同花", max(sorted_ranks)
+            return "同花", 6, max(sorted_ranks)
 
     
     # 判斷是否有四條、葫蘆、三條、兩對或一對
     rank_values = list(rank_counts.values())
     if 4 in rank_values:
-        return "四條", ranks[rank_values.index(4)]
+        return "四條", 8 , ranks[rank_values.index(4)]
     if 3 in rank_values and 2 in rank_values:
         three_rank_index = rank_values.index(3)
         two_rank_index = None
@@ -65,25 +65,25 @@ def evaluate_hand(hand):
         if two_rank_index is not None:
             three_rank = ranks[three_rank_index]
             two_rank = ranks[two_rank_index]
-            return "葫蘆", (three_rank, two_rank)
+            return "葫蘆", 7, (three_rank, two_rank)
     if 3 in rank_values:
-        return "三條", ranks[rank_values.index(3)]
+        return "三條", 4, ranks[rank_values.index(3)]
     if rank_values.count(2) == 2:
         pair_ranks = []
         for _ in range(2):
             pair_ranks.append(ranks[rank_values.index(2)])
             rank_values[rank_values.index(2)] = 0  # 防止重複選取相同點數的對子
-        return "兩對", tuple(sorted(pair_ranks, reverse=True))
+        return "兩對", 3, tuple(sorted(pair_ranks, reverse=True))
     if 2 in rank_values:
         pair_rank = ranks[rank_values.index(2)]
-        return "一對", pair_rank
+        return "一對", 2, pair_rank
     
     # 判斷是否有順子
     if is_straight(hand):
-        return "順子", max(sorted_ranks)
+        return "順子", 5, max(sorted_ranks)
     
     # 否則是高牌
-    return "高牌", max(rank_counts)
+    return "高牌", 1, max(rank_counts)
 
 # 比較玩家手牌並找出獲勝者
 best_hand = ("高牌", 0)
@@ -134,25 +134,10 @@ def is_straight_helper(values):
             return False
 
     return True
-
-# for i, player_hand in enumerate(players):
-#     hand_type, hand_rank = evaluate_hand( [
-#     {'rank': '3', 'suit': '♣'},
-#     {'rank': 'A', 'suit': '♥'},
-#     {'rank': '2', 'suit': '♦'},
-#     {'rank': '4', 'suit': '♥'},
-#     {'rank': '5', 'suit': '♠'}
-# ])
     
 for i, player_hand in enumerate(players):
-    hand_type, hand_rank = evaluate_hand( [
-    {'rank': 'K', 'suit': '♣'},
-    {'rank': 'A', 'suit': '♥'},
-    {'rank': 'Q', 'suit': '♦'},
-    {'rank': 'J', 'suit': '♥'},
-    {'rank': '10', 'suit': '♠'}
-])
-    print(hand_type, hand_rank)
+    hand_type, hand_level, hand_rank = evaluate_hand(player_hand + community_cards)
+    print(hand_type, hand_level, hand_rank)
     # if hand_rank > best_hand[1]:
     #     best_hand = (hand_type, hand_rank)
     #     winning_players = [i + 1]
